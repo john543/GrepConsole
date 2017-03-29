@@ -1,14 +1,12 @@
 package krasa.grepconsole.gui;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.*;
-
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
-
 import krasa.grepconsole.model.Sound;
+
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * @author Vojtech Krasa
@@ -17,6 +15,7 @@ public class SoundSettingsForm {
 	private JCheckBox enabledCheckBox;
 	private TextFieldWithBrowseButton path;
 	private JPanel root;
+	private JTextField commandText;
 	private JButton test;
 
 	public SoundSettingsForm() {

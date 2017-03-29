@@ -1,10 +1,10 @@
 package krasa.grepconsole.gui;
 
-import com.centerkey.utils.BareBonesBrowserLaunch;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.ui.JBPopupMenu;
+import com.intellij.openapi.util.IconLoader;
 import com.intellij.ui.CheckedTreeNode;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.treeStructure.treetable.TreeTableTree;
@@ -14,10 +14,12 @@ import krasa.grepconsole.gui.table.CheckboxTreeTable;
 import krasa.grepconsole.gui.table.GrepExpressionGroupTreeNode;
 import krasa.grepconsole.gui.table.GrepExpressionItemTreeNode;
 import krasa.grepconsole.gui.table.TableUtils;
+import krasa.grepconsole.gui.table.column.SoundColumn;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
 import krasa.grepconsole.model.Profile;
+import krasa.grepconsole.model.Sound;
 import krasa.grepconsole.plugin.DefaultState;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
 import krasa.grepconsole.plugin.PluginState;
@@ -31,7 +33,12 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
@@ -39,6 +46,8 @@ import java.util.List;
 import static krasa.grepconsole.Cloner.deepClone;
 
 public class SettingsDialog {
+	public static final Icon SOUND_OFF = IconLoader.getIcon("soundOff.gif", SoundColumn.class);
+	public static final Icon SOUND_ON = IconLoader.getIcon("soundOn.gif", SoundColumn.class);
 	private static final Logger log = Logger.getInstance(SettingsDialog.class);
 	private final SettingsContext settingsContext;
 	private JPanel rootComponent;
@@ -52,7 +61,6 @@ public class SettingsDialog {
 	private JButton deleteButton;
 	private JCheckBox enableFiltering;
 	private JCheckBox multilineOutput;
-	private JButton DONATEButton;
 	private JCheckBox showStatsInConsole;
 	private JCheckBox showStatsInStatusBar;
 	private JButton fileTailSettings;
@@ -61,6 +69,9 @@ public class SettingsDialog {
 	private JCheckBox enableFoldings;
 	private JFormattedTextField maxProcessingTime;
 	private JCheckBox filterOutBeforeGreppingToASubConsole;
+	private JTextField minCompilationTime;
+	private JCheckBox claimFocusAfterBuildCheckBox;
+	private JButton playSoundButton;
 	// private JCheckBox synchronous;
 	private PluginState settings;
 
@@ -75,14 +86,8 @@ public class SettingsDialog {
 		// }
 		this.settingsContext = settingsContext;
 		this.settings = settings;
-		DONATEButton.setBorder(null);
-		DONATEButton.setContentAreaFilled(false);
-		DONATEButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				BareBonesBrowserLaunch.openURL("https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=75YN7U7H7D7XU&lc=CZ&item_name=Grep%20Console%20%2d%20IntelliJ%20plugin&currency_code=USD&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHostedGuest");
-			}
-		});
+		playSoundButton.addActionListener(new AddSoundAction());
+		setIcon();
 		addNewButton.addActionListener(new AddNewItemAction());
 		addNewGroup.addActionListener(new AddNewGroupAction());
 		resetToDefaultButton.addActionListener(new ResetToDefaultAction());
@@ -115,6 +120,19 @@ public class SettingsDialog {
 		} else {
 			contextSpecificText.setVisible(false);
 		}
+	}
+
+	private void setIcon()
+	{
+		if (getProfile().getSound().isEnabled())
+		{
+			playSoundButton.setIcon(SOUND_ON);
+		}
+		else
+		{
+			playSoundButton.setIcon(SOUND_OFF);
+		}
+
 	}
 
 	public MouseAdapter rightClickMenu() {
@@ -257,6 +275,7 @@ public class SettingsDialog {
 		numberFormatter.setMinimum(0);
 		maxLengthToMatch = new JFormattedTextField(numberFormatter);
 		maxProcessingTime = new JFormattedTextField(numberFormatter);
+		minCompilationTime = new JFormattedTextField(numberFormatter);
 		table = new SettingsTableBuilder(this).getTable();
 	}
 
@@ -317,6 +336,8 @@ public class SettingsDialog {
 		enableFoldings.setSelected(data.isEnableFoldings());
 		filterOutBeforeGreppingToASubConsole.setSelected(data.isFilterOutBeforeGrep());
 		maxLengthToMatch.setText(data.getMaxLengthToMatch());
+		minCompilationTime.setText(data.getMinCompilationTime());
+		claimFocusAfterBuildCheckBox.setSelected(data.isClaimFocusAfterBuild());
 	}
 
 	public void getData(Profile data) {
@@ -329,6 +350,8 @@ public class SettingsDialog {
 		data.setShowStatsInStatusBarByDefault(showStatsInStatusBar.isSelected());
 		data.setEnableFoldings(enableFoldings.isSelected());
 		data.setFilterOutBeforeGrep(filterOutBeforeGreppingToASubConsole.isSelected());
+		data.setClaimFocusAfterBuild(claimFocusAfterBuildCheckBox.isSelected());
+		data.setMinCompilationTime(minCompilationTime.getText());
 		data.setMaxLengthToMatch(maxLengthToMatch.getText());
 	}
 
@@ -345,6 +368,9 @@ public class SettingsDialog {
 		if (filterOutBeforeGreppingToASubConsole.isSelected() != data.isFilterOutBeforeGrep()) return true;
 		if (maxLengthToMatch.getText() != null ? !maxLengthToMatch.getText().equals(data.getMaxLengthToMatch()) : data.getMaxLengthToMatch() != null)
 			return true;
+		if (claimFocusAfterBuildCheckBox.isSelected() != data.isClaimFocusAfterBuild()) return true;
+		if (minCompilationTime.getText() != data.getMinCompilationTime()) return true;
+
 		return false;
 	}
 
@@ -416,6 +442,16 @@ public class SettingsDialog {
 			rebuildProfile();
 			TableUtils.reloadTree(table);
 			TableUtils.selectNode(newChild, table);
+		}
+	}
+
+	private class AddSoundAction implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent actionEvent)
+		{
+			showDialog(getProfile().getSound());
 		}
 	}
 
@@ -511,4 +547,26 @@ public class SettingsDialog {
 			}
 		}
 	}
+
+	private boolean showDialog(Sound sound)
+	{
+		DialogBuilder builder = new DialogBuilder(this.getRootComponent());
+		SoundSettingsForm soundSettingsForm = new SoundSettingsForm();
+		builder.setCenterPanel(soundSettingsForm.getRoot());
+		builder.setDimensionServiceKey("GrepConsoleSound");
+		builder.setTitle("Sound settings");
+		builder.removeAllActions();
+		builder.addOkAction();
+		builder.addCancelAction();
+		soundSettingsForm.setData(sound);
+		boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
+		if (isOk)
+		{
+			soundSettingsForm.getData(sound);
+			setIcon();
+		}
+		getProfile().setSound(sound);
+		return isOk;
+	}
+
 }

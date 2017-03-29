@@ -1,13 +1,14 @@
 package krasa.grepconsole.filter.support;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.wm.WindowManager;
+import com.intellij.util.ui.UIUtil;
 import krasa.grepconsole.model.GrepExpressionItem;
-
 import org.apache.commons.lang.StringUtils;
 
-import com.intellij.openapi.diagnostic.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GrepProcessorImpl implements GrepProcessor {
 	private static final Logger log = Logger.getInstance(GrepProcessorImpl.class.getName());
@@ -57,6 +58,15 @@ public class GrepProcessorImpl implements GrepProcessor {
 						if (grepExpressionItem.getSound().isEnabled()) {
 							grepExpressionItem.getSound().play();
 						}
+						if (grepExpressionItem.isClaimFocus())
+						{
+							claim();
+						}
+						if (grepExpressionItem.getConsoleCommand().isEnabled())
+						{
+							grepExpressionItem.getConsoleCommand().run();
+						}
+
 					}
 				}
 			} else if (matches(input) && !matchesUnless(input)) {
@@ -69,10 +79,27 @@ public class GrepProcessorImpl implements GrepProcessor {
 				if (grepExpressionItem.getSound().isEnabled()) {
 					grepExpressionItem.getSound().play();
 				}
+				if (grepExpressionItem.isClaimFocus())
+				{
+					claim();
+				}
+				if (grepExpressionItem.getConsoleCommand().isEnabled())
+				{
+					grepExpressionItem.getConsoleCommand().run();
+				}
 			}
+
+
 		}
 		return state;
 	}
+
+	private void claim()
+	{
+		UIUtil.toFront(WindowManager.getInstance().suggestParentWindow(ProjectManager.getInstance().getOpenProjects()[0]));
+
+	}
+
 
 	private boolean matches(CharSequence input) {
 		Pattern pattern = grepExpressionItem.getPattern();

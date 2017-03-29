@@ -86,6 +86,7 @@ public class SettingsTableBuilder {
 						new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Continue matching", "continueMatching").tooltipText("If true, match a line against next configured items to apply multiple styles")));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Case insensitive",
 				"caseInsensitive")));
+
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Bold", "style.bold")));
 		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Italic",
@@ -98,6 +99,11 @@ public class SettingsTableBuilder {
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(STATUS_BAR_COUNT, "showCountInStatusBar").tooltipText("Show count of occurrences in Status Bar statistics panel\n(the number may not be right for test executions)")));
 		columns.add(new FolderColumnInfoWrapper(
 				new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>(CONSOLE_COUNT, "showCountInConsole").tooltipText("Show count of occurrences in Console statistics panel\n(the number may not be right for test executions)")));
+
+		columns.add(new FolderColumnInfoWrapper(new CheckBoxJavaBeanColumnInfo<GrepExpressionItem>("Claim focus",
+				"claimFocus")));
+		columns.add(new FolderColumnInfoWrapper(new CommandColumn("Command", settingsDialog)));
+
 		columns.add(new FolderColumnInfoWrapper(new SoundColumn("Sound", settingsDialog)));
 
 		CheckboxTreeCellRendererBase renderer = new CheckboxTreeCellRendererBase() {

@@ -7,25 +7,8 @@
       <sourceFolder url="file://$MODULE_DIR$/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/test" isTestSource="true" />
     </content>
-    <orderEntry type="library" name="lib" level="project" />
-    <orderEntry type="library" scope="TEST" name="test" level="project" />
-    <orderEntry type="library" scope="TEST" name="test (2)" level="project" />
-    <orderEntry type="library" name="jfm" level="project" />
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="IntelliJ IDEA IU-171.3780.107" jdkType="IDEA JDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
-      <library name="lib">
-        <CLASSES>
-          <root url="file://$MODULE_DIR$/lib" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/lib" />
-        </SOURCES>
-        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" />
-        <jarDirectory url="file://$MODULE_DIR$/lib" recursive="false" type="SOURCES" />
-      </library>
-    </orderEntry>
     <orderEntry type="module-library">
       <library name="test">
         <CLASSES>
@@ -39,15 +22,6 @@
         <jarDirectory url="file://$MODULE_DIR$/lib/test" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
-    <orderEntry type="module-library" scope="PROVIDED">
-      <library>
-        <CLASSES>
-          <root url="jar://$MODULE_DIR$/../intellij-community/plugins/maven/lib/plexus-utils-2.0.6.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES />
-      </library>
-    </orderEntry>
     <orderEntry type="module-library">
       <library name="JMF">
         <CLASSES>
@@ -58,6 +32,7 @@
         <jarDirectory url="file://$MODULE_DIR$/lib/JMF-2.1.1e/lib" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="lib" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_basePreferences">

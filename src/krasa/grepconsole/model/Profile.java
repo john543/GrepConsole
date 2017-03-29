@@ -2,6 +2,7 @@ package krasa.grepconsole.model;
 
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.xmlb.annotations.Transient;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,7 @@ public class Profile extends DomainObject {
 	private boolean enabledHighlighting = true;
 	private boolean enabledInputFiltering = true;
 	private boolean enableMaxLengthLimit = true;
+	private boolean claimFocusAfterBuild = false;
 	@Transient
 	private transient Integer maxLengthToMatchAsInt;
 	private boolean multiLineOutput;
@@ -30,8 +32,11 @@ public class Profile extends DomainObject {
 	private String maxProcessingTime = MAX_PROCESSING_TIME_DEFAULT;
 	@Transient
 	private transient Integer maxProcessingTimeAsInt;
+
+	private String minCompilationTime;
 	private boolean synchronous;
 	private boolean filterOutBeforeGrep;
+	private Sound sound = new Sound();
 
 	// for higlighting, it always ends with \n, but for input filtering it does not
 	@NotNull
@@ -206,6 +211,7 @@ public class Profile extends DomainObject {
 		maxProcessingTimeAsInt = Integer.valueOf(maxProcessingTime);
 	}
 
+
 	protected String normalize(String s) {
 		return s.trim().replaceAll("[\u00A0 ,.]", "");
 	}
@@ -224,5 +230,47 @@ public class Profile extends DomainObject {
 
 	public void setFilterOutBeforeGrep(final boolean filterOutBeforeGrep) {
 		this.filterOutBeforeGrep = filterOutBeforeGrep;
+	}
+
+	public boolean isClaimFocusAfterBuild()
+	{
+		return claimFocusAfterBuild;
+	}
+
+	public void setClaimFocusAfterBuild(boolean claimFocusAfterBuild)
+	{
+		this.claimFocusAfterBuild = claimFocusAfterBuild;
+	}
+
+	public String getMinCompilationTime()
+	{
+		return minCompilationTime;
+	}
+
+	public int getMinCompilationTimeAsInt()
+	{
+		if (!StringUtils.isEmpty(minCompilationTime) && StringUtils.isNumeric(minCompilationTime))
+		{
+			return Integer.parseInt(minCompilationTime);
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+	public void setMinCompilationTime(String minCompilationTime)
+	{
+		this.minCompilationTime = minCompilationTime;
+	}
+
+	public Sound getSound()
+	{
+		return sound;
+	}
+
+	public void setSound(Sound sound)
+	{
+		this.sound = sound;
 	}
 }

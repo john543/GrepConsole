@@ -140,6 +140,9 @@
 			<implementation-class>krasa.grepconsole.tail.remotecall.GrepConsoleRemoteCallComponent
 			</implementation-class>
 		</component>
+		<component>
+			<implementation-class>krasa.grepconsole.buildlistener.BuildListenerRegistrator</implementation-class>
+		</component>
 	</application-components>
 
 	<project-components>

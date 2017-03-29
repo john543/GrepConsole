@@ -1,19 +1,17 @@
 package krasa.grepconsole.model;
 
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
-import org.apache.commons.lang.StringUtils;
-
 import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.util.xmlb.annotations.Transient;
-
 import krasa.grepconsole.filter.support.Cache;
 import krasa.grepconsole.filter.support.GrepProcessor;
 import krasa.grepconsole.filter.support.GrepProcessorImpl;
 import krasa.grepconsole.filter.support.ThreadUnsafeGrepProcessor;
+import org.apache.commons.lang.StringUtils;
+
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class GrepExpressionItem extends AbstractGrepModelElement {
 
@@ -26,6 +24,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 	private String grepExpression;
 	private String unlessGrepExpression;
 	private boolean caseInsensitive;
+	private boolean claimFocus;
 	private GrepStyle style = new GrepStyle();
 	private Sound sound = new Sound();
 
@@ -38,6 +37,7 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	private boolean showCountInConsole = false;
 	private boolean showCountInStatusBar = false;
+	private ConsoleCommand consoleCommand = new ConsoleCommand();
 
 	public GrepExpressionItem() {
 		this(null);
@@ -183,6 +183,21 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		}
 	}
 
+
+	public boolean isClaimFocus()
+	{
+		return claimFocus;
+	}
+
+	public void setClaimFocus(boolean claimFocus)
+	{
+		if (claimFocus != this.claimFocus)
+		{
+			this.claimFocus = claimFocus;
+
+		}
+	}
+
 	public GrepProcessor createProcessor() {
 		return new GrepProcessorImpl(this);
 	}
@@ -206,6 +221,12 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 
 	public GrepExpressionItem caseInsensitive(final boolean caseInsensitive) {
 		this.caseInsensitive = caseInsensitive;
+		return this;
+	}
+
+	public GrepExpressionItem claimFocus(final boolean claimFocus)
+	{
+		this.claimFocus = claimFocus;
 		return this;
 	}
 
@@ -326,4 +347,13 @@ public class GrepExpressionItem extends AbstractGrepModelElement {
 		this.operationOnMatch = continueMatching ? Operation.CONTINUE_MATCHING : Operation.EXIT;
 	}
 
+	public ConsoleCommand getConsoleCommand()
+	{
+		return consoleCommand;
+	}
+
+	public void setConsoleCommand(ConsoleCommand consoleCommand)
+	{
+		this.consoleCommand = consoleCommand;
+	}
 }
