@@ -1,6 +1,9 @@
 package krasa.grepconsole.model;
 
 import com.intellij.openapi.application.ApplicationManager;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * @author jonathan - 3/23/17.
@@ -8,7 +11,6 @@ import com.intellij.openapi.application.ApplicationManager;
 public class ConsoleCommand extends DomainObject
 {
 	private String command;
-	private boolean enabled;
 
 	public void run()
 	{
@@ -18,8 +20,9 @@ public class ConsoleCommand extends DomainObject
 			{
 				try
 				{
-					Process p = Runtime.getRuntime().exec(command);
-					p.waitFor();
+					CommandLine cmdLine = CommandLine.parse(command);
+					DefaultExecutor executor = new DefaultExecutor();
+					executor.execute(cmdLine);
 				}
 				catch (Exception e)
 				{
@@ -41,11 +44,7 @@ public class ConsoleCommand extends DomainObject
 
 	public Boolean isEnabled()
 	{
-		return this.enabled;
+		return StringUtils.isNotBlank(command);
 	}
 
-	public void setEnabled(boolean enabled)
-	{
-		this.enabled = enabled;
-	}
 }

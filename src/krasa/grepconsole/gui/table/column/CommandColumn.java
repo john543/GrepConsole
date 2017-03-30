@@ -4,7 +4,7 @@ import com.intellij.openapi.ui.DialogBuilder;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.IconLoader;
 import krasa.grepconsole.gui.SettingsDialog;
-import krasa.grepconsole.gui.command.CommandSettingsForm;
+import krasa.grepconsole.gui.CommandSettingsForm;
 import krasa.grepconsole.model.GrepExpressionItem;
 import org.jetbrains.annotations.Nullable;
 

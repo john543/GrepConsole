@@ -119,7 +119,6 @@ public class SettingsTableBuilder {
 						textRenderer.setIcon(icon);
 					}
 				}
-
 			}
 		};
 		table = new CheckboxTreeTable(createRoot(), renderer, columns.toArray(new ColumnInfo[columns.size()]));

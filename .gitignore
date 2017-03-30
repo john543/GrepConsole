@@ -3,7 +3,6 @@ GrepConsole.iml
 GrepConsole.ipr
 GrepConsole.iws
 *.zip
-*.jar
 .idea/
 out/
 
