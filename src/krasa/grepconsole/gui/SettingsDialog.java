@@ -14,7 +14,9 @@ import krasa.grepconsole.gui.table.CheckboxTreeTable;
 import krasa.grepconsole.gui.table.GrepExpressionGroupTreeNode;
 import krasa.grepconsole.gui.table.GrepExpressionItemTreeNode;
 import krasa.grepconsole.gui.table.TableUtils;
+import krasa.grepconsole.gui.table.column.CommandColumn;
 import krasa.grepconsole.gui.table.column.SoundColumn;
+import krasa.grepconsole.model.ConsoleCommand;
 import krasa.grepconsole.model.GrepColor;
 import krasa.grepconsole.model.GrepExpressionGroup;
 import krasa.grepconsole.model.GrepExpressionItem;
@@ -46,6 +48,8 @@ import java.util.List;
 import static krasa.grepconsole.Cloner.deepClone;
 
 public class SettingsDialog {
+	public static final Icon COMMAND_OFF = IconLoader.getIcon("Cog1.png", CommandColumn.class);
+	public static final Icon COMMAND_ON = IconLoader.getIcon("Cog2.png", CommandColumn.class);
 	public static final Icon SOUND_OFF = IconLoader.getIcon("soundOff.gif", SoundColumn.class);
 	public static final Icon SOUND_ON = IconLoader.getIcon("soundOn.gif", SoundColumn.class);
 	private static final Logger log = Logger.getInstance(SettingsDialog.class);
@@ -72,6 +76,7 @@ public class SettingsDialog {
 	private JTextField minCompilationTime;
 	private JCheckBox claimFocusAfterBuildCheckBox;
 	private JButton playSoundButton;
+	private JButton commandButton;
 	// private JCheckBox synchronous;
 	private PluginState settings;
 
@@ -87,7 +92,9 @@ public class SettingsDialog {
 		this.settingsContext = settingsContext;
 		this.settings = settings;
 		playSoundButton.addActionListener(new AddSoundAction());
-		setIcon();
+		commandButton.addActionListener(new AddCommandAction());
+		setSoundIcon();
+		setCommandIcon();
 		addNewButton.addActionListener(new AddNewItemAction());
 		addNewGroup.addActionListener(new AddNewGroupAction());
 		resetToDefaultButton.addActionListener(new ResetToDefaultAction());
@@ -122,7 +129,7 @@ public class SettingsDialog {
 		}
 	}
 
-	private void setIcon()
+	private void setSoundIcon()
 	{
 		if (getProfile().getSound().isEnabled())
 		{
@@ -131,6 +138,19 @@ public class SettingsDialog {
 		else
 		{
 			playSoundButton.setIcon(SOUND_OFF);
+		}
+
+	}
+
+	private void setCommandIcon()
+	{
+		if (getProfile().getCommand().isEnabled())
+		{
+			commandButton.setIcon(COMMAND_ON);
+		}
+		else
+		{
+			commandButton.setIcon(COMMAND_OFF);
 		}
 
 	}
@@ -451,7 +471,17 @@ public class SettingsDialog {
 		@Override
 		public void actionPerformed(ActionEvent actionEvent)
 		{
-			showDialog(getProfile().getSound());
+			showSoundDialog(getProfile().getSound());
+		}
+	}
+
+	private class AddCommandAction implements ActionListener
+	{
+
+		@Override
+		public void actionPerformed(ActionEvent actionEvent)
+		{
+			showCommandDialog(getProfile().getCommand());
 		}
 	}
 
@@ -548,7 +578,28 @@ public class SettingsDialog {
 		}
 	}
 
-	private boolean showDialog(Sound sound)
+	private boolean showCommandDialog(ConsoleCommand command)
+	{
+		DialogBuilder builder = new DialogBuilder(this.getRootComponent());
+		CommandSettingsForm commandSettingsForm = new CommandSettingsForm();
+		builder.setCenterPanel(commandSettingsForm.getRoot());
+		builder.setDimensionServiceKey("GrepConsoleCommand");
+		builder.setTitle("Command settings");
+		builder.removeAllActions();
+		builder.addOkAction();
+		builder.addCancelAction();
+		commandSettingsForm.setData(command);
+		boolean isOk = builder.show() == DialogWrapper.OK_EXIT_CODE;
+		if (isOk)
+		{
+			commandSettingsForm.getData(command);
+			setCommandIcon();
+		}
+		getProfile().setCommand(command);
+		return isOk;
+	}
+
+	private boolean showSoundDialog(Sound sound)
 	{
 		DialogBuilder builder = new DialogBuilder(this.getRootComponent());
 		SoundSettingsForm soundSettingsForm = new SoundSettingsForm();
@@ -563,7 +614,7 @@ public class SettingsDialog {
 		if (isOk)
 		{
 			soundSettingsForm.getData(sound);
-			setIcon();
+			setSoundIcon();
 		}
 		getProfile().setSound(sound);
 		return isOk;

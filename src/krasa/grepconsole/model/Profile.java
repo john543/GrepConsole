@@ -38,6 +38,9 @@ public class Profile extends DomainObject {
 	private boolean filterOutBeforeGrep;
 	private Sound sound = new Sound();
 
+
+	private ConsoleCommand command = new ConsoleCommand();
+
 	// for higlighting, it always ends with \n, but for input filtering it does not
 	@NotNull
 	public String limitInputLength_andCutNewLine(@NotNull String text) {
@@ -273,4 +276,15 @@ public class Profile extends DomainObject {
 	{
 		this.sound = sound;
 	}
+
+	public ConsoleCommand getCommand()
+	{
+		return command;
+	}
+
+	public void setCommand(ConsoleCommand command)
+	{
+		this.command = command;
+	}
+
 }

@@ -6,6 +6,7 @@ import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.util.messages.MessageBus;
+import krasa.grepconsole.model.ConsoleCommand;
 import krasa.grepconsole.model.Profile;
 import krasa.grepconsole.model.Sound;
 import krasa.grepconsole.plugin.GrepConsoleApplicationComponent;
@@ -28,10 +29,11 @@ public class BuildListenerRegistrator implements ApplicationComponent
 	private void setupEventListeners()
 	{
 		Profile profile = ApplicationManager.getApplication().getComponent(GrepConsoleApplicationComponent.class).getState().getDefaultProfile();
-		if (profile.isClaimFocusAfterBuild() || profile.getSound().isEnabled())
+		if (profile.isClaimFocusAfterBuild() || profile.getSound().isEnabled() || profile.getCommand().isEnabled())
 		{
 			int minBuildTime = profile.getMinCompilationTimeAsInt();
 			Sound sound = profile.getSound();
+			ConsoleCommand command = profile.getCommand();
 			boolean claimFocus = profile.isClaimFocusAfterBuild();
 			ApplicationManager.getApplication().invokeLater(new Runnable()
 			{
@@ -39,7 +41,7 @@ public class BuildListenerRegistrator implements ApplicationComponent
 				{
 					Project project = ProjectManager.getInstance().getOpenProjects()[0];
 					MessageBus bus = project.getMessageBus();
-					bus.connect().subscribe(CompilerTopics.COMPILATION_STATUS, new TaskFinishedListener(project, minBuildTime, sound, claimFocus));
+					bus.connect().subscribe(CompilerTopics.COMPILATION_STATUS, new TaskFinishedListener(project, minBuildTime, sound, command, claimFocus));
 
 				}
 			});
